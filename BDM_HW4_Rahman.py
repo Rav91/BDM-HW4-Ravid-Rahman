@@ -8,7 +8,7 @@ from pyspark.sql.window import Window
 def main(sc):
     spark = SparkSession(sc)
     
-    core_places_df = spark.read.csv('core-places-nyc.csv', header=True, escape='"')
+    core_places_df = spark.read.csv('hdfs:///data/share/bdm/core-places-nyc.csv', header=True, escape='"')
 
     core_places_df = core_places_df.select('placekey', 'location_name', 'naics_code')
 
@@ -23,7 +23,7 @@ def main(sc):
                                       or 'naics_code == 445291' or 'naics_code == 445292' or 'naics_code == 445299')
     super_sans_conv_df = core_places_df.filter('naics_code == 445110')
     
-    weekly_pattern_df = spark.read.csv('/content/weekly-patterns-nyc-2019-2020/part-00000', header=True, escape='"')
+    weekly_pattern_df = spark.read.csv('hdfs:///data/share/bdm/weekly-patterns-nyc-2019-2020/*', header=True, escape='"')
     weekly_pattern_df = weekly_pattern_df.select('placekey', 'date_range_start', 'visits_by_day')
     
     visits_by_day = weekly_pattern_df.select('visits_by_day').rdd.map(lambda row : row[0]).collect()
